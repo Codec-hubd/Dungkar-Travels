@@ -76,6 +76,41 @@
         .chat-open {
             animation: slideInUp 0.3s ease-out forwards;
         }
+
+        /* Modal Animations */
+        .modal-enter {
+            opacity: 0;
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transition: opacity 300ms ease-out;
+        }
+        .modal-exit {
+            opacity: 1;
+        }
+        .modal-exit-active {
+            opacity: 0;
+            transition: opacity 200ms ease-in;
+        }
+        
+        .modal-content-enter {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+        }
+        .modal-content-enter-active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-content-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .modal-content-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 200ms ease-in;
+        }
     </style>
 </head>
 <body class="font-sans text-gray-600 antialiased bg-stone-50">
@@ -429,7 +464,7 @@
                                 <p class="text-xs text-gray-400 mt-2">*Includes SDF, guide, transport & meals.</p>
                             </div>
                             
-                            <button onclick="alert('Proceeding to booking with this itinerary...')" class="w-full bg-brand-600 text-white font-bold py-3 rounded-lg hover:bg-brand-700 transition">Request Quote</button>
+                            <button onclick="requestCustomQuote(this)" class="w-full bg-brand-600 text-white font-bold py-3 rounded-lg hover:bg-brand-700 transition shadow-md">Request Quote</button>
                         </div>
                     </div>
                 </div>
@@ -853,6 +888,27 @@
 
     </main>
 
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform scale-95 opacity-0 transition-all duration-300 flex flex-col overflow-hidden" id="modal-content">
+                <div class="p-6">
+                    <h3 id="modal-title" class="text-xl font-serif font-bold text-gray-900 mb-2">Notification</h3>
+                    <p id="modal-message" class="text-gray-600 mb-6 leading-relaxed">Message goes here.</p>
+                    
+                    <div id="modal-input-container" class="hidden mb-6">
+                        <input type="text" id="modal-input" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="">
+                    </div>
+
+                    <div class="flex justify-end gap-3" id="modal-actions">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating Chat Widget (Guest) -->
     <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
         <!-- Chat Window -->
@@ -1092,6 +1148,82 @@
                 try { history.pushState({ page: pageId }, null, `#${pageId}`); } catch(e) {}
             }
         }
+        
+        // --- CUSTOM MODAL ---
+        let currentModalCallback = null;
+
+        window.showModal = function({ title, message, type = 'alert', placeholder = '', confirmText = 'OK', cancelText = 'Cancel', onConfirm = null }) {
+            const modal = document.getElementById('custom-modal');
+            const backdrop = document.getElementById('modal-backdrop');
+            const content = document.getElementById('modal-content');
+            
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            
+            const inputContainer = document.getElementById('modal-input-container');
+            const input = document.getElementById('modal-input');
+            const actions = document.getElementById('modal-actions');
+            
+            // Reset
+            inputContainer.classList.add('hidden');
+            actions.innerHTML = '';
+            currentModalCallback = onConfirm;
+            
+            // Setup based on type
+            if (type === 'input') {
+                inputContainer.classList.remove('hidden');
+                input.value = '';
+                input.placeholder = placeholder;
+                actions.innerHTML = `
+                    <button onclick="closeModal()" class="px-4 py-2 rounded-lg text-gray-500 hover:bg-gray-100 font-medium transition">${cancelText}</button>
+                    <button onclick="confirmModal()" class="px-4 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 font-bold transition">${confirmText}</button>
+                `;
+            } else if (type === 'confirm') {
+                actions.innerHTML = `
+                    <button onclick="closeModal()" class="px-4 py-2 rounded-lg text-gray-500 hover:bg-gray-100 font-medium transition">${cancelText}</button>
+                    <button onclick="confirmModal()" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-bold transition">${confirmText}</button>
+                `;
+            } else {
+                actions.innerHTML = `
+                    <button onclick="confirmModal()" class="px-4 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 font-bold transition">${confirmText}</button>
+                `;
+            }
+            
+            modal.classList.remove('hidden');
+            // Slight delay for animation
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                content.classList.remove('opacity-0', 'scale-95');
+                if (type === 'input') input.focus();
+            }, 10);
+        }
+        
+        window.closeModal = function() {
+            const modal = document.getElementById('custom-modal');
+            const backdrop = document.getElementById('modal-backdrop');
+            const content = document.getElementById('modal-content');
+            
+            backdrop.classList.add('opacity-0');
+            content.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                currentModalCallback = null;
+            }, 300);
+        }
+        
+        window.confirmModal = function() {
+            const input = document.getElementById('modal-input');
+            const value = input.value;
+            if (currentModalCallback) {
+                currentModalCallback(value);
+            }
+            if (!document.getElementById('modal-input-container').classList.contains('hidden')) {
+                // If it was an input modal, close only after callback (callback can prevent close if needed, but here we simplify)
+            }
+            closeModal();
+        }
+
 
         // --- INIT ---
         lucide.createIcons();
@@ -1221,7 +1353,7 @@
             newReview.innerHTML = `<div class="flex items-center gap-2 mb-1"><span class="font-bold text-gray-800">${user}</span><div class="flex text-yellow-400 text-xs">${'★'.repeat(rating)}</div></div><p class="text-gray-600 text-sm">"${text}"</p>`;
             reviewList.appendChild(newReview);
             form.reset();
-            alert("Review submitted! Thank you for your feedback.");
+            window.showModal({ title: 'Success', message: 'Review submitted! Thank you for your feedback.', type: 'alert' });
         }
 
         window.handleBooking = function(e) {
@@ -1236,8 +1368,15 @@
                 btn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
                 btn.classList.add('bg-green-600', 'hover:bg-green-700');
                 setTimeout(() => {
-                    alert("Your booking has been confirmed! A receipt has been sent to your email.");
-                    window.navigateTo('home');
+                    window.showModal({ 
+                        title: 'Booking Confirmed', 
+                        message: 'Your booking has been confirmed! A receipt has been sent to your email.',
+                        type: 'alert',
+                        onConfirm: () => {
+                             window.navigateTo('home');
+                        }
+                    });
+                    
                     btn.disabled = false;
                     btn.classList.remove('opacity-75', 'bg-green-600');
                     btn.classList.add('bg-brand-600');
@@ -1320,6 +1459,61 @@
             timeline.innerHTML = html;
             document.getElementById('builder-duration').innerText = `${totalDays} Days / ${totalDays-1} Nights`;
             document.getElementById('builder-cost').innerText = `$${totalCost}`;
+        }
+        
+        window.requestCustomQuote = function(btn) {
+            const destIds = document.querySelectorAll('#builder-destinations input:checked');
+            
+            if (destIds.length === 0) {
+                window.showModal({ title: 'Itinerary Empty', message: 'Please select at least one destination.', type: 'alert' });
+                return;
+            }
+            
+            window.showModal({
+                title: 'Get Your Quote',
+                message: 'Please enter your email address to receive the quote:',
+                type: 'input',
+                placeholder: 'you@example.com',
+                confirmText: 'Submit Request',
+                onConfirm: (email) => {
+                     if (!email || !email.trim()) {
+                         // Need to reopen modal or show error. For simplicity, just alert via new modal
+                         // Timeout to allow previous modal to close smoothly
+                         setTimeout(() => window.showModal({ title: 'Error', message: 'Email is required to send the quote.', type: 'alert' }), 300);
+                         return;
+                     }
+
+                    const originalText = btn.innerText;
+                    btn.innerText = "Submitting Request...";
+                    btn.disabled = true;
+                    btn.classList.add('opacity-75', 'cursor-not-allowed');
+        
+                    setTimeout(() => {
+                        btn.innerText = "Request Sent! ✓";
+                        btn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
+                        btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                        
+                        setTimeout(() => {
+                            window.showModal({ 
+                                title: 'Request Received', 
+                                message: `Thank you! We have received your custom itinerary request. A detailed quote will be sent to ${email} within 24 hours.`,
+                                type: 'alert',
+                                onConfirm: () => {
+                                    window.navigateTo('home');
+                                }
+                            });
+                            
+                            // Reset button state
+                            setTimeout(() => {
+                                btn.disabled = false;
+                                btn.classList.remove('opacity-75', 'cursor-not-allowed', 'bg-green-600', 'hover:bg-green-700');
+                                btn.classList.add('bg-brand-600', 'hover:bg-brand-700');
+                                btn.innerText = originalText;
+                            }, 500);
+                        }, 1000);
+                    }, 1500);
+                }
+            });
         }
 
         // --- FIREBASE CHAT SYSTEM ---
@@ -1530,47 +1724,63 @@
              }
         }
         
-        window.clearCurrentChat = async function() {
-            if (!activeAdminChatId || !confirm("Are you sure you want to clear all messages in this chat?")) return;
+        window.clearCurrentChat = function() {
+            if (!activeAdminChatId) return;
             
-            try {
-                await deleteAllMessages(activeAdminChatId);
-                
-                // Update parent doc
-                const chatRef = doc(db, 'chats', activeAdminChatId);
-                await updateDoc(chatRef, { lastMessage: 'Chat cleared by admin' });
+            window.showModal({
+                title: 'Clear Chat',
+                message: 'Are you sure you want to clear all messages in this chat?',
+                type: 'confirm',
+                confirmText: 'Clear Messages',
+                onConfirm: async () => {
+                     try {
+                        await deleteAllMessages(activeAdminChatId);
+                        
+                        // Update parent doc
+                        const chatRef = doc(db, 'chats', activeAdminChatId);
+                        await updateDoc(chatRef, { lastMessage: 'Chat cleared by admin' });
 
-                alert("Chat cleared.");
-            } catch(e) {
-                console.error("Error clearing chat", e);
-                alert("Error clearing chat: " + e.message);
-            }
+                        window.showModal({ title: 'Success', message: 'Chat cleared successfully.', type: 'alert' });
+                    } catch(e) {
+                        console.error("Error clearing chat", e);
+                        window.showModal({ title: 'Error', message: "Error clearing chat: " + e.message, type: 'alert' });
+                    }
+                }
+            });
         }
 
-        window.deleteCurrentChat = async function() {
-            if (!activeAdminChatId || !confirm("Are you sure you want to DELETE this chat completely?")) return;
+        window.deleteCurrentChat = function() {
+            if (!activeAdminChatId) return;
 
-            try {
-                await deleteAllMessages(activeAdminChatId);
-                
-                // Delete parent doc
-                const chatRef = doc(db, 'chats', activeAdminChatId);
-                await deleteDoc(chatRef);
-                
-                // Reset UI
-                activeAdminChatId = null;
-                document.getElementById('admin-chat-messages').innerHTML = '';
-                document.getElementById('admin-chat-header').querySelector('span').innerText = 'Select a chat';
-                document.getElementById('admin-chat-controls').classList.remove('flex');
-                document.getElementById('admin-chat-controls').classList.add('hidden');
-                document.getElementById('admin-chat-input').disabled = true;
-                document.getElementById('admin-send-btn').disabled = true;
-                
-                alert("Chat deleted.");
-            } catch(e) {
-                console.error("Error deleting chat", e);
-                alert("Error deleting chat: " + e.message);
-            }
+             window.showModal({
+                title: 'Delete Chat',
+                message: 'Are you sure you want to DELETE this chat completely? This action cannot be undone.',
+                type: 'confirm',
+                confirmText: 'Delete Chat',
+                onConfirm: async () => {
+                    try {
+                        await deleteAllMessages(activeAdminChatId);
+                        
+                        // Delete parent doc
+                        const chatRef = doc(db, 'chats', activeAdminChatId);
+                        await deleteDoc(chatRef);
+                        
+                        // Reset UI
+                        activeAdminChatId = null;
+                        document.getElementById('admin-chat-messages').innerHTML = '';
+                        document.getElementById('admin-chat-header').querySelector('span').innerText = 'Select a chat';
+                        document.getElementById('admin-chat-controls').classList.remove('flex');
+                        document.getElementById('admin-chat-controls').classList.add('hidden');
+                        document.getElementById('admin-chat-input').disabled = true;
+                        document.getElementById('admin-send-btn').disabled = true;
+                        
+                        window.showModal({ title: 'Success', message: 'Chat deleted.', type: 'alert' });
+                    } catch(e) {
+                        console.error("Error deleting chat", e);
+                        window.showModal({ title: 'Error', message: "Error deleting chat: " + e.message, type: 'alert' });
+                    }
+                }
+            });
         }
     </script>
 </body>
