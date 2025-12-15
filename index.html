@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serene Horizons | Bhutan Luxury Travel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f4f7f2',
+                            100: '#e3ece1',
+                            500: '#eaa327', // Bhutan Yellow/Orange accent
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#2c5e42', // Deep forest green
+                            900: '#1b3c29',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        .page-section.active {
+            display: block;
+            opacity: 1;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2c5e42; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1b3c29; 
+        }
+        
+        /* Nav Link Active State */
+        .nav-link.active-link {
+            color: #2c5e42;
+            border-bottom-color: #eaa327;
+        }
+
+        /* Chat Widget Animations */
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .chat-open {
+            animation: slideInUp 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-600 antialiased bg-stone-50">
+
+    <!-- Navigation -->
+    <header class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300" id="navbar">
+        <!-- Top Bar -->
+        <div class="bg-brand-900 text-white py-2 px-4 text-xs md:text-sm hidden md:block">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex space-x-6">
+                    <span class="flex items-center gap-2"><i data-lucide="phone" class="w-3 h-3 text-brand-500"></i> +975-17617107</span>
+                    <span class="flex items-center gap-2"><i data-lucide="mail" class="w-3 h-3 text-brand-500"></i> tashidelek@serenehorizons.bt</span>
+                </div>
+                <div class="flex space-x-4">
+                    <span class="text-brand-100 italic font-serif">"Happiness is a place"</span>
+                    <a href="javascript:void(0)" onclick="navigateTo('admin-login')" class="text-brand-500 hover:text-white transition text-xs opacity-50 hover:opacity-100">Staff Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Nav -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div onclick="navigateTo('home')" class="flex-shrink-0 flex items-center gap-3 cursor-pointer group">
+                    <div class="w-10 h-10 bg-brand-800 rounded-lg flex items-center justify-center text-white font-serif font-bold text-xl shadow-lg group-hover:bg-brand-500 transition-colors duration-300">
+                        <img src="https://img.icons8.com/color/48/bhutan.png" alt="Bhutan Flag" class="w-6 h-6 opacity-90">
+                    </div>
+                    <div>
+                        <h1 class="font-serif text-xl font-bold text-gray-800 tracking-tight group-hover:text-brand-800 transition-colors">Serene Horizons</h1>
+                        <p class="text-[10px] text-brand-600 uppercase tracking-widest font-semibold">Kingdom of Bhutan</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <button onclick="navigateTo('home')" id="nav-home" class="nav-link text-gray-600 hover:text-brand-800 font-medium transition-colors duration-200 text-sm uppercase tracking-wide border-b-2 border-transparent pb-1">Home</button>
+                    <button onclick="navigateTo('holidays')" id="nav-holidays" class="nav-link text-gray-600 hover:text-brand-800 font-medium transition-colors duration-200 text-sm uppercase tracking-wide border-b-2 border-transparent pb-1">Holidays</button>
+                    <button onclick="navigateTo('custom-trip')" id="nav-custom-trip" class="nav-link text-gray-600 hover:text-brand-800 font-medium transition-colors duration-200 text-sm uppercase tracking-wide border-b-2 border-transparent pb-1">Plan My Trip</button>
+                    <button onclick="navigateTo('destinations')" id="nav-destinations" class="nav-link text-gray-600 hover:text-brand-800 font-medium transition-colors duration-200 text-sm uppercase tracking-wide border-b-2 border-transparent pb-1">Destinations</button>
+                    <button onclick="navigateTo('hotels')" id="nav-hotels" class="nav-link text-gray-600 hover:text-brand-800 font-medium transition-colors duration-200 text-sm uppercase tracking-wide border-b-2 border-transparent pb-1">Hotels</button>
+                    <button onclick="navigateTo('about')" id="nav-about" class="nav-link text-gray-600 hover:text-brand-800 font-medium transition-colors duration-200 text-sm uppercase tracking-wide border-b-2 border-transparent pb-1">About</button>
+                    <button onclick="navigateTo('blog')" id="nav-blog" class="nav-link text-gray-600 hover:text-brand-800 font-medium transition-colors duration-200 text-sm uppercase tracking-wide border-b-2 border-transparent pb-1">Blog</button>
+                    <button onclick="navigateTo('contact')" id="nav-contact" class="bg-brand-800 text-white px-5 py-2 rounded-full hover:bg-brand-900 font-medium transition-colors duration-200 text-sm uppercase tracking-wide shadow-md transform hover:-translate-y-0.5">Contact</button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-brand-800 focus:outline-none p-2">
+                        <i data-lucide="menu" class="w-7 h-7"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <button onclick="navigateTo('home')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-800 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500 transition-all">Home</button>
+                <button onclick="navigateTo('holidays')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-800 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500 transition-all">Holidays</button>
+                <button onclick="navigateTo('custom-trip')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-800 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500 transition-all">Plan My Trip</button>
+                <button onclick="navigateTo('destinations')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-800 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500 transition-all">Destinations</button>
+                <button onclick="navigateTo('hotels')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-800 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500 transition-all">Hotels</button>
+                <button onclick="navigateTo('about')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-800 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500 transition-all">About Us</button>
+                <button onclick="navigateTo('blog')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-800 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500 transition-all">Blog</button>
+                <button onclick="navigateTo('contact')" class="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-brand-800 hover:text-brand-900 hover:bg-brand-50 font-bold">Contact Us</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="pt-20">
+
+        <!-- ==================== HOME PAGE ==================== -->
+        <section id="home" class="page-section">
+            <!-- Hero -->
+            <div class="relative h-[90vh] w-full flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transform scale-105 animate-[kenburns_20s_infinite_alternate]" style="background-image: url('https://plus.unsplash.com/premium_photo-1692976235042-32bc7f884c79?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
+                </div>
+                <div class="relative z-10 text-center px-4 max-w-5xl mx-auto mt-16">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-brand-50 text-xs uppercase tracking-widest font-semibold mb-6 animate-fade-in-up">
+                        <span class="w-2 h-2 rounded-full bg-brand-500"></span> Welcome to the Thunder Dragon Kingdom
+                    </div>
+                    <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 leading-tight drop-shadow-2xl animate-fade-in-up" style="animation-delay: 0.2s;">
+                        The Last <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-yellow-200 italic pr-2">Shangri-La</span>
+                    </h1>
+                    <p class="text-gray-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up shadow-black drop-shadow-md" style="animation-delay: 0.4s;">
+                        Journey through pristine Himalayan landscapes, ancient dzongs, and a culture measured in Gross National Happiness.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.6s;">
+                        <button onclick="navigateTo('holidays')" class="bg-brand-500 text-white px-10 py-4 rounded-full font-bold hover:bg-brand-600 transition duration-300 shadow-[0_10px_20px_rgba(234,163,39,0.3)] transform hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2">
+                            Explore Journeys <i data-lucide="compass" class="w-5 h-5"></i>
+                        </button>
+                        <button onclick="navigateTo('custom-trip')" class="bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-full font-bold hover:bg-white hover:text-brand-900 transition duration-300 transform hover:-translate-y-1">
+                            Build My Itinerary
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intro Section -->
+            <div class="py-24 bg-white relative">
+                 <div class="absolute top-0 left-0 w-32 h-32 opacity-10 pointer-events-none">
+                    <img src="https://img.icons8.com/ios/100/000000/mandala.png" class="w-full h-full" alt="Mandala">
+                </div>
+                <div class="max-w-4xl mx-auto px-6 text-center">
+                    <h2 class="text-3xl font-serif font-bold text-brand-900 mb-6">Experience the Magic of Bhutan</h2>
+                    <p class="text-gray-600 text-lg leading-loose">
+                        Serene Horizons is your gateway to the hidden kingdom of Bhutan. We don't just offer tours; we craft spiritual and physical journeys. From the cliffside majesty of <strong>Paro Taktsang</strong> to the fertile valleys of <strong>Punakha</strong>, our bespoke itineraries are designed to immerse you in the local culture, cuisine, and breathtaking nature.
+                    </p>
+                    <div class="grid grid-cols-3 gap-8 mt-12 border-t border-gray-100 pt-8">
+                        <div>
+                            <span class="block text-4xl font-serif font-bold text-brand-600 mb-2">70%</span>
+                            <span class="text-sm uppercase tracking-wide text-gray-500">Forest Cover</span>
+                        </div>
+                        <div>
+                            <span class="block text-4xl font-serif font-bold text-brand-600 mb-2">1st</span>
+                            <span class="text-sm uppercase tracking-wide text-gray-500">Carbon Negative</span>
+                        </div>
+                        <div>
+                            <span class="block text-4xl font-serif font-bold text-brand-600 mb-2">100%</span>
+                            <span class="text-sm uppercase tracking-wide text-gray-500">Happiness</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Destinations Teaser -->
+            <div class="bg-stone-100 py-20">
+                <div class="max-w-7xl mx-auto px-4">
+                     <div class="flex justify-between items-end mb-12">
+                        <div>
+                            <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-900">Curated Experiences</h2>
+                            <p class="text-gray-500 mt-2">Handpicked for the discerning traveler.</p>
+                        </div>
+                        <button onclick="navigateTo('holidays')" class="hidden md:flex items-center gap-2 text-brand-700 font-semibold hover:text-brand-900">View all <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div onclick="navigateTo('holidays')" class="group relative h-96 rounded-2xl overflow-hidden cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1729176989417-10cab5aa9076?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Punakha Dzong">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 text-white">
+                                <span class="bg-brand-500 text-xs font-bold px-2 py-1 rounded mb-2 inline-block">Cultural</span>
+                                <h3 class="text-2xl font-serif font-bold">Punakha Festival</h3>
+                                <p class="text-gray-300 text-sm mt-1">Witness the grandeur of Bhutanese traditions.</p>
+                            </div>
+                        </div>
+                        <div onclick="navigateTo('holidays')" class="group relative h-96 rounded-2xl overflow-hidden cursor-pointer">
+                            <img src="https://www.firefoxtours.com/sites/default/files/styles/no_watermark/public/media/rights_managed/988.jpg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Himalayas">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 text-white">
+                                <span class="bg-brand-500 text-xs font-bold px-2 py-1 rounded mb-2 inline-block">Adventure</span>
+                                <h3 class="text-2xl font-serif font-bold">Snowman Trek</h3>
+                                <p class="text-gray-300 text-sm mt-1">Challenge yourself on the roof of the world.</p>
+                            </div>
+                        </div>
+                        <div onclick="navigateTo('holidays')" class="group relative h-96 rounded-2xl overflow-hidden cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1605904583059-7880dad25595?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Monks">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 text-white">
+                                <span class="bg-brand-500 text-xs font-bold px-2 py-1 rounded mb-2 inline-block">Spiritual</span>
+                                <h3 class="text-2xl font-serif font-bold">Monastic Life</h3>
+                                <p class="text-gray-300 text-sm mt-1">Find inner peace in ancient monasteries.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== HOLIDAYS PAGE ==================== -->
+        <section id="holidays" class="page-section">
+            <div class="bg-brand-900 text-white py-20 px-4 text-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+                <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">Our Holiday Packages</h1>
+                <p class="max-w-2xl mx-auto text-brand-100 text-lg">Curated itineraries designed to show you the heart and soul of the Himalayas.</p>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <!-- Filters -->
+                <div class="flex flex-wrap gap-4 justify-center mb-12">
+                    <button class="px-6 py-2 rounded-full bg-brand-800 text-white font-medium shadow-md">All</button>
+                    <button class="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 font-medium">Trekking</button>
+                    <button class="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 font-medium">Cultural</button>
+                    <button class="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 font-medium">Festivals</button>
+                    <button class="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 font-medium">Wellness</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Package Card 1 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1578556881786-851d4b79cb73?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" alt="Tigers Nest">
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Best Seller</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 text-xs text-brand-600 font-semibold mb-3 uppercase tracking-wide">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> Paro, Thimphu, Punakha
+                            </div>
+                            <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">Glimpse of Bhutan</h3>
+                            <p class="text-gray-500 text-sm mb-4 line-clamp-2">A perfect 6-day introduction to the main western valleys. Hike to the Tiger's Nest and visit the majestic Punakha Dzong.</p>
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                                <div>
+                                    <span class="text-xs text-gray-400">Duration</span>
+                                    <div class="font-bold text-gray-800">6 Days</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400">From</span>
+                                    <div class="font-bold text-brand-600 text-lg">$1,550</div>
+                                </div>
+                            </div>
+                            <button onclick="openTourDetails(1)" class="w-full mt-4 py-3 bg-brand-50 text-brand-800 font-semibold rounded-lg hover:bg-brand-100 transition">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Package Card 2 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="https://www.thirdrockadventures.com/assets-back/images/blog/mount-jomolhari.jpgxDV.jpg" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" alt="Trekking">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 text-xs text-brand-600 font-semibold mb-3 uppercase tracking-wide">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> Jomolhari Base Camp
+                            </div>
+                            <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">Jomolhari Trek</h3>
+                            <p class="text-gray-500 text-sm mb-4 line-clamp-2">A moderate trek offering spectacular views of Mt. Jomolhari (7314m). Walk through high altitude yak pastures.</p>
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                                <div>
+                                    <span class="text-xs text-gray-400">Duration</span>
+                                    <div class="font-bold text-gray-800">10 Days</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400">From</span>
+                                    <div class="font-bold text-brand-600 text-lg">$2,800</div>
+                                </div>
+                            </div>
+                            <button onclick="openTourDetails(2)" class="w-full mt-4 py-3 bg-brand-50 text-brand-800 font-semibold rounded-lg hover:bg-brand-100 transition">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Package Card 3 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1581588344552-b92555010a4b?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" alt="Festival">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 text-xs text-brand-600 font-semibold mb-3 uppercase tracking-wide">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> Thimphu & Paro
+                            </div>
+                            <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">Festival of Colors</h3>
+                            <p class="text-gray-500 text-sm mb-4 line-clamp-2">Time your visit with the Thimphu Tshechu. Watch mask dances, receive blessings, and wear your finest Gho or Kira.</p>
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                                <div>
+                                    <span class="text-xs text-gray-400">Duration</span>
+                                    <div class="font-bold text-gray-800">8 Days</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400">From</span>
+                                    <div class="font-bold text-brand-600 text-lg">$2,100</div>
+                                </div>
+                            </div>
+                            <button onclick="openTourDetails(3)" class="w-full mt-4 py-3 bg-brand-50 text-brand-800 font-semibold rounded-lg hover:bg-brand-100 transition">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==================== TOUR DETAILS (Simulated Page) ==================== -->
+        <section id="tour-details" class="page-section">
+             <div class="max-w-7xl mx-auto px-4 py-10">
+                 <button onclick="navigateTo('holidays')" class="mb-6 flex items-center text-brand-600 hover:text-brand-800"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Holidays</button>
+                 <div id="tour-details-content" class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                     <!-- Populated via JS -->
+                 </div>
+             </div>
+        </section>
+
+        <!-- ==================== CUSTOM TRIP BUILDER ==================== -->
+        <section id="custom-trip" class="page-section">
+            <div class="bg-brand-900 text-white py-12 px-4 text-center">
+                <h1 class="text-3xl md:text-4xl font-serif font-bold mb-2">Build Your Dream Itinerary</h1>
+                <p class="max-w-xl mx-auto text-brand-100">Select destinations and activities to create a bespoke journey.</p>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Builder Controls -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Step 1: Destinations -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center"><span class="bg-brand-100 text-brand-800 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">1</span> Select Destinations</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="builder-destinations">
+                                <!-- JS Injected -->
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Activities -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center"><span class="bg-brand-100 text-brand-800 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">2</span> Add Experiences</h3>
+                            <div class="space-y-4" id="builder-activities">
+                                <p class="text-gray-400 text-sm italic">Select destinations first to see available activities.</p>
+                            </div>
+                        </div>
+                        
+                         <!-- Step 3: Accommodation -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center"><span class="bg-brand-100 text-brand-800 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">3</span> Accommodation Style</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <label class="border rounded-lg p-4 cursor-pointer hover:border-brand-500 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
+                                    <input type="radio" name="hotel-tier" value="3" class="hidden" onchange="updateBuilder()" checked>
+                                    <div class="font-bold text-gray-800">Standard (3-Star)</div>
+                                    <div class="text-xs text-gray-500 mt-1">Comfortable, traditional hotels.</div>
+                                    <div class="text-brand-600 font-bold mt-2">Included</div>
+                                </label>
+                                <label class="border rounded-lg p-4 cursor-pointer hover:border-brand-500 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
+                                    <input type="radio" name="hotel-tier" value="4" class="hidden" onchange="updateBuilder()">
+                                    <div class="font-bold text-gray-800">Deluxe (4-Star)</div>
+                                    <div class="text-xs text-gray-500 mt-1">Boutique resorts with extra amenities.</div>
+                                    <div class="text-brand-600 font-bold mt-2">+$150/night</div>
+                                </label>
+                                <label class="border rounded-lg p-4 cursor-pointer hover:border-brand-500 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
+                                    <input type="radio" name="hotel-tier" value="5" class="hidden" onchange="updateBuilder()">
+                                    <div class="font-bold text-gray-800">Luxury (5-Star)</div>
+                                    <div class="text-xs text-gray-500 mt-1">World-class properties like Aman/Six Senses.</div>
+                                    <div class="text-brand-600 font-bold mt-2">+$500/night</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Builder Summary -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-brand-500 sticky top-24">
+                            <h3 class="text-xl font-serif font-bold text-gray-900 mb-6">Your Itinerary</h3>
+                            
+                            <div class="relative pl-4 border-l-2 border-gray-100 space-y-6 mb-8" id="builder-timeline">
+                                <!-- Timeline items injected here -->
+                                <p class="text-gray-400 text-sm">Your journey is empty.</p>
+                            </div>
+
+                            <div class="border-t border-gray-100 pt-4 mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-600">Estimated Duration</span>
+                                    <span class="font-bold text-gray-900" id="builder-duration">0 Days</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Estimated Cost</span>
+                                    <span class="font-bold text-2xl text-brand-600" id="builder-cost">$0</span>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">*Includes SDF, guide, transport & meals.</p>
+                            </div>
+                            
+                            <button onclick="alert('Proceeding to booking with this itinerary...')" class="w-full bg-brand-600 text-white font-bold py-3 rounded-lg hover:bg-brand-700 transition">Request Quote</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== DESTINATIONS PAGE ==================== -->
+        <section id="destinations" class="page-section">
+             <div class="bg-white py-20 px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Explore The Kingdom</h1>
+                <p class="max-w-2xl mx-auto text-gray-500 text-lg">From the bustling capital to the spiritual heartlands.</p>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 pb-20 space-y-20">
+                <!-- Paro -->
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="w-full md:w-1/2">
+                        <div class="rounded-2xl overflow-hidden shadow-xl rotate-1 hover:rotate-0 transition duration-500">
+                             <img src="https://images.unsplash.com/photo-1637825987997-6e6d117b81b1?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Paro" class="w-full">
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <h2 class="text-3xl font-serif font-bold text-brand-800 mb-4">Paro Valley</h2>
+                        <p class="text-gray-600 mb-6 leading-relaxed">Home to the country's only international airport and the iconic Tiger's Nest Monastery (Taktsang). Paro is a valley of history and myths, with some of the oldest temples in the kingdom.</p>
+                        <ul class="space-y-2 mb-8">
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> Hike to Tiger's Nest</li>
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> National Museum</li>
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> Rinpung Dzong</li>
+                        </ul>
+                        <button onclick="navigateTo('holidays')" class="text-brand-600 font-bold border-b-2 border-brand-500 hover:text-brand-800">View Paro Tours</button>
+                    </div>
+                </div>
+
+                <!-- Punakha -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-12">
+                    <div class="w-full md:w-1/2">
+                         <div class="rounded-2xl overflow-hidden shadow-xl -rotate-1 hover:rotate-0 transition duration-500">
+                             <img src="https://images.unsplash.com/photo-1580649851649-992b28f56e98?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Punakha" class="w-full">
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <h2 class="text-3xl font-serif font-bold text-brand-800 mb-4">Punakha</h2>
+                        <p class="text-gray-600 mb-6 leading-relaxed">The old capital of Bhutan and the winter residence of the monastic body. Punakha Dzong, located at the confluence of the Pho Chhu (father) and Mo Chhu (mother) rivers, is arguably the most beautiful dzong in the country.</p>
+                        <ul class="space-y-2 mb-8">
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> Punakha Dzong</li>
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> Chimi Lhakhang (Fertility Temple)</li>
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> White Water Rafting</li>
+                        </ul>
+                         <button onclick="navigateTo('holidays')" class="text-brand-600 font-bold border-b-2 border-brand-500 hover:text-brand-800">View Punakha Tours</button>
+                    </div>
+                </div>
+                
+                 <!-- Thimphu -->
+                 <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="w-full md:w-1/2">
+                        <div class="rounded-2xl overflow-hidden shadow-xl rotate-1 hover:rotate-0 transition duration-500">
+                             <img src="https://images.unsplash.com/photo-1650747857310-c359fd3ee5c5?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Thimphu" class="w-full">
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <h2 class="text-3xl font-serif font-bold text-brand-800 mb-4">Thimphu</h2>
+                        <p class="text-gray-600 mb-6 leading-relaxed">The bustling capital city that blends modern development with ancient traditions. It is the only capital in the world without traffic lights.</p>
+                        <ul class="space-y-2 mb-8">
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> Buddha Dordenma (Giant Buddha)</li>
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> Motithang Takin Preserve</li>
+                            <li class="flex items-center gap-2 text-gray-700"><i data-lucide="check-circle" class="w-5 h-5 text-brand-500"></i> Centenary Farmers Market</li>
+                        </ul>
+                         <button onclick="navigateTo('holidays')" class="text-brand-600 font-bold border-b-2 border-brand-500 hover:text-brand-800">View Thimphu Tours</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== HOTELS PAGE ==================== -->
+        <section id="hotels" class="page-section">
+             <div class="bg-stone-900 text-white py-20 px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">Luxury Stays</h1>
+                <p class="max-w-2xl mx-auto text-gray-400 text-lg">Retreat into comfort after a day of exploration.</p>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Hotel 1 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/86/0e/55/amankora-paro.jpg?w=900&h=500&s=1" class="w-full h-56 object-cover" alt="Luxury Lodge">
+                    <div class="p-6">
+                        <div class="flex gap-1 mb-2 text-brand-500">
+                             <i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Amankora Paro</h3>
+                        <p class="text-gray-500 text-sm mb-4">Paro Valley</p>
+                        <p class="text-gray-600 text-sm mb-6">Nestled in pine forests, this lodge offers a seamless blend of rustic charm and modern luxury.</p>
+                        <a href="https://www.aman.com/resorts/amankora" target="_blank" class="text-brand-600 font-semibold hover:text-brand-800 text-sm uppercase">View Property</a>
+                    </div>
+                </div>
+                 <!-- Hotel 2 -->
+                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="https://www.remotelands.com/storage/media/6680/conversions/b231206009-banner-size.jpg" class="w-full h-56 object-cover" alt="Riverside Resort">
+                    <div class="p-6">
+                        <div class="flex gap-1 mb-2 text-brand-500">
+                             <i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Six Senses Punakha</h3>
+                        <p class="text-gray-500 text-sm mb-4">Punakha Valley</p>
+                        <p class="text-gray-600 text-sm mb-6">Known as the 'Flying Farmhouse' amidst the rice fields, offering panoramic views of the valley.</p>
+                        <a href="https://www.sixsenses.com/en/hotels-resorts/asia-the-pacific/bhutan/bhutan/lodges/six-senses-punakha/" target="_blank" class="text-brand-600 font-semibold hover:text-brand-800 text-sm uppercase">View Property</a>
+                    </div>
+                </div>
+                 <!-- Hotel 3 -->
+                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="https://dhensa.com/wp-content/uploads/2021/07/slide-4.jpg" class="w-full h-56 object-cover" alt="Heritage Hotel">
+                    <div class="p-6">
+                        <div class="flex gap-1 mb-2 text-brand-500">
+                             <i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Dhensa Boutique Resort</h3>
+                        <p class="text-gray-500 text-sm mb-4">Punakha</p>
+                        <p class="text-gray-600 text-sm mb-6">A peaceful sanctuary offering contemporary Bhutanese architecture and stunning views.</p>
+                        <a href="https://dhensa.com/" target="_blank" class="text-brand-600 font-semibold hover:text-brand-800 text-sm uppercase">View Property</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ABOUT & TEAM PAGE ==================== -->
+        <section id="about" class="page-section">
+            <div class="bg-stone-900 text-white py-20 px-4 text-center bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]">
+                <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">Our Story</h1>
+                <p class="max-w-2xl mx-auto text-stone-300 text-lg">Weaving happiness into every journey.</p>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <div class="flex flex-col md:flex-row gap-12 items-center">
+                    <div class="w-full md:w-1/2">
+                        <img src="https://images.unsplash.com/photo-1729174518995-8c4546b3dd53?q=80&w=1040&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Bhutan Landscape" class="rounded-2xl shadow-xl">
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <h2 class="text-3xl font-serif font-bold text-brand-900 mb-6">Born in the Himalayas</h2>
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            Serene Horizons was founded in 2010 with a simple mission: to share the profound peace and beauty of Bhutan with the world, not as a destination, but as an experience.
+                        </p>
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            We are a local, family-run agency based in Thimphu. We believe in <strong>High Value, Low Volume</strong> tourism—a policy designed to preserve our unique culture and pristine environment. When you travel with us, you are not just a tourist; you are a guest of the Kingdom.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 mt-8">
+                             <div class="flex items-center gap-3">
+                                 <div class="bg-brand-100 p-2 rounded-full text-brand-600"><i data-lucide="leaf" class="w-5 h-5"></i></div>
+                                 <span class="font-bold text-gray-800 text-sm">Eco-Friendly</span>
+                             </div>
+                             <div class="flex items-center gap-3">
+                                 <div class="bg-brand-100 p-2 rounded-full text-brand-600"><i data-lucide="heart" class="w-5 h-5"></i></div>
+                                 <span class="font-bold text-gray-800 text-sm">Community First</span>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Section -->
+            <div class="bg-stone-50 py-20 border-t border-gray-200">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="text-center mb-16">
+                         <span class="text-brand-600 font-bold uppercase tracking-widest text-xs">Our People</span>
+                         <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mt-2">Meet Your Guides</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <!-- Member 1 -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition text-center group">
+                            <div class="h-64 overflow-hidden">
+                                <img src="https://placehold.co/600x800/e3ece1/1b3c29?text=Team+Member" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="CEO">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg text-gray-900">Sangay Tenzin</h3>
+                                <p class="text-brand-600 text-xs font-bold uppercase mb-3">Founder & CEO</p>
+                                <p class="text-gray-500 text-sm">With 20 years in tourism, Sangay ensures every itinerary is perfect.</p>
+                            </div>
+                        </div>
+                        <!-- Member 2 -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition text-center group">
+                            <div class="h-64 overflow-hidden">
+                                <img src="https://placehold.co/600x800/e3ece1/1b3c29?text=Team+Member" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Guide">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg text-gray-900">Pema Choden</h3>
+                                <p class="text-brand-600 text-xs font-bold uppercase mb-3">Senior Guide</p>
+                                <p class="text-gray-500 text-sm">An encyclopedia of Bhutanese history and Buddhism.</p>
+                            </div>
+                        </div>
+                        <!-- Member 3 -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition text-center group">
+                             <div class="h-64 overflow-hidden">
+                                <img src="https://placehold.co/600x800/e3ece1/1b3c29?text=Team+Member" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Trek Leader">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg text-gray-900">Karma Dorji</h3>
+                                <p class="text-brand-600 text-xs font-bold uppercase mb-3">Trekking Specialist</p>
+                                <p class="text-gray-500 text-sm">Has conquered the Snowman Trek 5 times.</p>
+                            </div>
+                        </div>
+                         <!-- Member 4 -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition text-center group">
+                             <div class="h-64 overflow-hidden">
+                                <img src="https://placehold.co/600x800/e3ece1/1b3c29?text=Team+Member" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Ops">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg text-gray-900">Dechen Wangmo</h3>
+                                <p class="text-brand-600 text-xs font-bold uppercase mb-3">Operations Manager</p>
+                                <p class="text-gray-500 text-sm">Ensures your logistics, visas, and permits are flawless.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== BLOG PAGE ==================== -->
+        <section id="blog" class="page-section">
+            <div class="max-w-4xl mx-auto px-4 py-20">
+                <div class="text-center mb-16">
+                    <span class="text-brand-600 font-bold uppercase tracking-widest text-xs">The Serene Journal</span>
+                    <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mt-2">Stories from Bhutan</h1>
+                </div>
+
+                <div class="space-y-16">
+                    <!-- Article 1 -->
+                    <article class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg">
+                            <img src="https://www.dailybhutan.com/pub_files/00030307894626/how-to-make-your-own-ema-datshi-chilli-cheese-in-10-minutes_1560.jpg" alt="Chili" class="w-full h-64 object-cover hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="w-full md:w-1/2">
+                            <span class="text-gray-400 text-sm">October 15, 2023</span>
+                            <h2 class="text-2xl font-serif font-bold text-gray-900 mt-2 mb-4 hover:text-brand-600 cursor-pointer">Ema Datshi: Not Just a Dish, An Emotion</h2>
+                            <p class="text-gray-600 mb-4 line-clamp-3">If you haven't cried while eating Ema Datshi, have you really visited Bhutan? Explore the national dish made of chili and cheese that defines the Bhutanese palate.</p>
+                            <a href="#" class="text-brand-600 font-bold hover:underline">Read Full Story</a>
+                        </div>
+                    </article>
+
+                     <!-- Article 2 -->
+                    <article class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg">
+                            <img src="https://tricycle.org/wp-content/uploads/2021/06/bhutan-treasure-dances-rehearsal-phurbai-gi-tsacham-1024x755.jpg" alt="Monks" class="w-full h-64 object-cover hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="w-full md:w-1/2">
+                             <span class="text-gray-400 text-sm">September 2, 2023</span>
+                            <h2 class="text-2xl font-serif font-bold text-gray-900 mt-2 mb-4 hover:text-brand-600 cursor-pointer">Understanding Gross National Happiness</h2>
+                            <p class="text-gray-600 mb-4 line-clamp-3">Beyond GDP, Bhutan measures its success in smiles and well-being. A deep dive into the philosophy that guides the nation.</p>
+                            <a href="#" class="text-brand-600 font-bold hover:underline">Read Full Story</a>
+                        </div>
+                    </article>
+
+                    <!-- Article 3 -->
+                    <article class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg">
+                            <img src="https://images.unsplash.com/photo-1545652985-5edd365b12eb?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ" alt="Trek" class="w-full h-64 object-cover hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="w-full md:w-1/2">
+                             <span class="text-gray-400 text-sm">August 10, 2023</span>
+                            <h2 class="text-2xl font-serif font-bold text-gray-900 mt-2 mb-4 hover:text-brand-600 cursor-pointer">Packing for the Himalayas</h2>
+                            <p class="text-gray-600 mb-4 line-clamp-3">From light layers for Punakha to down jackets for mountain passes, here is your essential packing guide for a Bhutanese adventure.</p>
+                            <a href="#" class="text-brand-600 font-bold hover:underline">Read Full Story</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CONTACT PAGE ==================== -->
+        <section id="contact" class="page-section">
+            <div class="bg-brand-900 text-white py-20 px-4 text-center">
+                 <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">Get in Touch</h1>
+                <p class="max-w-2xl mx-auto text-brand-100 text-lg">We would love to hear from you. Tashi Delek!</p>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <!-- Contact Form -->
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h3>
+                        <form class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Dorji">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Wangchuk">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <input type="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="you@example.com">
+                            </div>
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                <select class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition bg-white">
+                                    <option>General Inquiry</option>
+                                    <option>Plan a Trip</option>
+                                    <option>Custom Itinerary</option>
+                                    <option>Feedback</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                <textarea rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Tell us about your dream trip..."></textarea>
+                            </div>
+                            <button type="button" class="w-full bg-brand-600 text-white font-bold py-4 rounded-lg hover:bg-brand-700 transition duration-300 shadow-md">Send Message</button>
+                        </form>
+                    </div>
+
+                    <!-- Sidebar Info & Newsletter -->
+                    <div class="space-y-12">
+                         <!-- Info -->
+                        <div>
+                            <h3 class="text-2xl font-serif font-bold text-gray-900 mb-6">Contact Information</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-brand-100 p-3 rounded-full text-brand-600">
+                                        <i data-lucide="map-pin" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Head Office</h4>
+                                        <p class="text-gray-600">123 Serenity Lane, Highland Plaza<br>Thimphu 11001, Bhutan</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-brand-100 p-3 rounded-full text-brand-600">
+                                        <i data-lucide="phone" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Phone</h4>
+                                        <p class="text-gray-600">+975-17617107 (Bhutan)</p>
+                                        <p class="text-gray-600">+1 (555) 123-4567 (International)</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-brand-100 p-3 rounded-full text-brand-600">
+                                        <i data-lucide="mail" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Email</h4>
+                                        <p class="text-gray-600">hello@serenehorizons.bt</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Newsletter -->
+                        <div class="bg-gray-900 rounded-2xl p-8 text-center text-white relative overflow-hidden">
+                             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                             <div class="relative z-10">
+                                 <i data-lucide="mail-open" class="w-12 h-12 mx-auto mb-4 text-brand-500"></i>
+                                 <h3 class="text-2xl font-serif font-bold mb-2">Subscribe to our Newsletter</h3>
+                                 <p class="text-gray-400 mb-6 text-sm">Get the latest travel tips, hidden gem alerts, and exclusive offers delivered to your inbox.</p>
+                                 <div class="flex flex-col gap-3">
+                                     <input type="email" placeholder="Your email address" class="w-full px-4 py-3 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-brand-500">
+                                     <button class="w-full bg-brand-500 text-white font-bold py-3 rounded-lg hover:bg-brand-600 transition">Subscribe</button>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ADMIN LOGIN ==================== -->
+        <section id="admin-login" class="page-section">
+            <div class="flex min-h-[60vh] items-center justify-center bg-stone-100">
+                <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+                    <h2 class="text-2xl font-serif font-bold mb-6 text-center text-brand-900">Staff Portal</h2>
+                    <div class="space-y-4">
+                         <input type="email" id="admin-email" placeholder="Email Address" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                         <input type="password" id="admin-password" placeholder="Password" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                         <button onclick="attemptAdminLogin()" class="w-full bg-brand-800 text-white font-bold py-3 rounded-lg hover:bg-brand-900 transition">Login</button>
+                    </div>
+                    <p id="login-error" class="text-red-500 text-sm mt-4 text-center hidden">Invalid credentials</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ADMIN PANEL ==================== -->
+        <section id="admin-panel" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <div class="flex justify-between items-center mb-8">
+                    <h1 class="text-3xl font-serif font-bold text-gray-900">Admin Dashboard</h1>
+                    <button onclick="adminLogout()" class="text-red-600 font-semibold text-sm">Logout</button>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Chat List -->
+                    <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden h-[600px] flex flex-col">
+                        <div class="p-4 bg-gray-50 border-b border-gray-200 font-bold">Active Chats</div>
+                        <div id="admin-chat-list" class="flex-1 overflow-y-auto p-2 space-y-2">
+                            <!-- Populated by JS -->
+                             <p class="text-gray-400 text-sm p-2 text-center">Waiting for chats...</p>
+                        </div>
+                    </div>
+
+                    <!-- Chat Window -->
+                    <div class="lg:col-span-3 bg-white rounded-xl shadow border border-gray-200 overflow-hidden h-[600px] flex flex-col relative">
+                        <div id="admin-chat-header" class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                            <span class="font-bold text-gray-700">Select a chat</span>
+                            <div id="admin-chat-controls" class="hidden gap-2">
+                                <button onclick="clearCurrentChat()" class="text-xs bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded hover:bg-yellow-200 font-medium transition">Clear Chat</button>
+                                <button onclick="deleteCurrentChat()" class="text-xs bg-red-100 text-red-700 px-3 py-1.5 rounded hover:bg-red-200 font-medium transition">Delete Chat</button>
+                            </div>
+                        </div>
+                        <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50">
+                            <!-- Messages -->
+                        </div>
+                        <div class="p-4 bg-white border-t border-gray-200">
+                            <form onsubmit="sendAdminMessage(event)" class="flex gap-2">
+                                <input type="text" id="admin-chat-input" class="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Reply..." disabled>
+                                <button type="submit" id="admin-send-btn" class="bg-brand-600 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50" disabled>Send</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Chat Widget (Guest) -->
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
+        <!-- Chat Window -->
+        <div id="chat-window" class="bg-white w-80 h-96 rounded-2xl shadow-2xl mb-4 pointer-events-auto flex flex-col overflow-hidden hidden transform transition-all origin-bottom-right">
+            <div class="bg-brand-800 p-4 text-white flex justify-between items-center">
+                <span class="font-bold flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i> Support</span>
+                <button onclick="toggleChat()" class="hover:bg-brand-700 p-1 rounded"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div id="guest-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 text-sm">
+                <!-- Chat messages loaded here -->
+            </div>
+            <div class="p-3 bg-white border-t border-gray-100">
+                <form onsubmit="sendGuestMessage(event)" class="flex gap-2">
+                    <input id="guest-chat-input" type="text" placeholder="Type a message..." class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-500 outline-none">
+                    <button type="submit" class="bg-brand-600 text-white p-2 rounded-lg"><i data-lucide="send" class="w-4 h-4"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <button onclick="toggleChat()" class="bg-brand-600 text-white p-4 rounded-full shadow-lg hover:bg-brand-700 transition pointer-events-auto flex items-center gap-2 group">
+            <i data-lucide="message-square" class="w-6 h-6"></i>
+            <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap">Chat with us</span>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer" class="bg-stone-900 text-gray-400 pt-20 pb-10 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <!-- About -->
+            <div>
+               <div class="flex items-center gap-2 mb-6 text-white">
+                  <div class="w-8 h-8 bg-brand-700 rounded-lg flex items-center justify-center font-serif font-bold">S</div>
+                  <span class="font-serif text-xl font-bold">Serene Horizons</span>
+               </div>
+               <p class="text-gray-500 mb-6 leading-relaxed text-sm">
+                 Authorized by the Tourism Council of Bhutan. We craft journeys that respect the environment and celebrate the culture of the Himalayas.
+               </p>
+            </div>
+            <!-- Quick Links -->
+            <div>
+              <h3 class="text-white font-bold mb-6 text-lg">Company</h3>
+              <ul class="space-y-3 text-sm">
+                <li><button onclick="navigateTo('about')" class="hover:text-brand-500 transition">About Us</button></li>
+                <li><button onclick="navigateTo('about')" class="hover:text-brand-500 transition">Our Team</button></li>
+                <li><button onclick="navigateTo('blog')" class="hover:text-brand-500 transition">Travel Blog</button></li>
+                <li><button onclick="navigateTo('contact')" class="hover:text-brand-500 transition">Contact Us</button></li>
+              </ul>
+            </div>
+            <!-- Legal -->
+            <div>
+              <h3 class="text-white font-bold mb-6 text-lg">Legal</h3>
+              <ul class="space-y-3 text-sm">
+                <li><a href="#" class="hover:text-brand-500 transition">Terms & Conditions</a></li>
+                <li><a href="#" class="hover:text-brand-500 transition">Privacy Policy</a></li>
+                <li><a href="#" class="hover:text-brand-500 transition">Visa Info</a></li>
+                <li><a href="#" class="hover:text-brand-500 transition">SDF Fees</a></li>
+              </ul>
+            </div>
+            <!-- Certified -->
+            <div>
+              <h3 class="text-white font-bold mb-6 text-lg">We Accept</h3>
+              <div class="flex gap-3 mb-6">
+                 <div class="w-12 h-8 bg-white rounded flex items-center justify-center"><img src="https://img.icons8.com/color/48/visa.png" class="h-6" alt="Visa"></div>
+                 <div class="w-12 h-8 bg-white rounded flex items-center justify-center"><img src="https://img.icons8.com/color/48/mastercard.png" class="h-6" alt="Mastercard"></div>
+                 <div class="w-12 h-8 bg-white rounded flex items-center justify-center"><img src="https://img.icons8.com/color/48/amex.png" class="h-6" alt="Amex"></div>
+              </div>
+              <p class="text-sm text-gray-500">Licensed by Tourism Council of Bhutan</p>
+              <p class="text-sm text-gray-500">License No: 102349</p>
+            </div>
+          </div>
+          <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-600">
+             <p>&copy; 2024 Serene Horizons Travels. All rights reserved.</p>
+          </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, limit, deleteDoc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAaAZXRoTv6EgEDKtPU0Y3ykqwTO7NAlL4",
+            authDomain: "dungkar-travels.firebaseapp.com",
+            projectId: "dungkar-travels",
+            storageBucket: "dungkar-travels.firebasestorage.app",
+            messagingSenderId: "288607816280",
+            appId: "1:288607816280:web:092259ba27795e7d27182d",
+            measurementId: "G-7W9MJGE17E"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- DATA & STATE ---
+        const TOUR_DATA = {
+            1: {
+                title: "Glimpse of Bhutan",
+                price: 1550,
+                duration: 6,
+                location: "Paro, Thimphu, Punakha",
+                desc: "A perfect 6-day introduction to the main western valleys. Hike to the Tiger's Nest and visit the majestic Punakha Dzong.",
+                image: "https://images.unsplash.com/photo-1578556881786-851d4b79cb73?q=80&w=1470&auto=format&fit=crop",
+                itinerary: [
+                    "Arrival in Paro, transfer to Thimphu.",
+                    "Thimphu sightseeing: Buddha Point, Memorial Chorten.",
+                    "Drive to Punakha via Dochula Pass (3100m).",
+                    "Punakha Dzong & Chimi Lhakhang.",
+                    "Drive back to Paro, visit National Museum.",
+                    "Hike to Tiger's Nest Monastery."
+                ],
+                reviews: [
+                    { user: "Sarah M.", rating: 5, text: "Absolutely magical! The guide was knowledgeable and the hike to Tiger's Nest is a must." },
+                    { user: "John D.", rating: 4, text: "Great itinerary, but the roads are a bit winding. Hotel in Punakha was superb." }
+                ]
+            },
+            2: {
+                title: "Jomolhari Trek",
+                price: 2800,
+                duration: 10,
+                location: "Jomolhari Base Camp",
+                desc: "A moderate trek offering spectacular views of Mt. Jomolhari (7314m). Walk through high altitude yak pastures.",
+                image: "https://www.thirdrockadventures.com/assets-back/images/blog/mount-jomolhari.jpgxDV.jpg",
+                itinerary: [
+                    "Acclimatization in Paro.",
+                    "Drive to Shana, start trek.",
+                    "Trek to Thangthangka.",
+                    "Trek to Jangothang (Base Camp).",
+                    "Rest day at Base Camp.",
+                    "Trek back down via alternative route."
+                ],
+                reviews: [
+                    { user: "Alex P.", rating: 5, text: "Challenging but rewarding. The views of Jomolhari at sunrise are unforgettable." }
+                ]
+            },
+            3: {
+                title: "Festival of Colors",
+                price: 2100,
+                duration: 8,
+                location: "Thimphu & Paro",
+                desc: "Time your visit with the Thimphu Tshechu. Watch mask dances, receive blessings, and wear your finest Gho or Kira.",
+                image: "https://images.unsplash.com/photo-1581588344552-b92555010a4b?q=80&w=1470&auto=format&fit=crop",
+                itinerary: [
+                    "Arrival Paro.",
+                    "Thimphu Festival Day 1.",
+                    "Thimphu Festival Day 2.",
+                    "Explore Thimphu Valley.",
+                    "Drive to Punakha.",
+                    "Return to Paro."
+                ],
+                reviews: []
+            }
+        };
+
+        const BUILDER_DATA = {
+            destinations: [
+                { id: 'paro', name: 'Paro', cost: 100, img: 'https://images.unsplash.com/photo-1637825987997-6e6d117b81b1?w=200&h=150&fit=crop' },
+                { id: 'thimphu', name: 'Thimphu', cost: 100, img: 'https://images.unsplash.com/photo-1650747857310-c359fd3ee5c5?w=200&h=150&fit=crop' },
+                { id: 'punakha', name: 'Punakha', cost: 100, img: 'https://images.unsplash.com/photo-1580649851649-992b28f56e98?w=200&h=150&fit=crop' },
+                { id: 'bumthang', name: 'Bumthang', cost: 150, img: 'https://api.breakbag.com/storage/images/bumthang-valley-bhutan-tour-pa-lgmhy68rahuf33k9-1754555042949.webp' }
+            ],
+            activities: {
+                'paro': [
+                    { id: 'tigers-nest', name: 'Tiger\'s Nest Hike', cost: 0, duration: 1 },
+                    { id: 'museum', name: 'National Museum', cost: 25, duration: 0.5 }
+                ],
+                'thimphu': [
+                    { id: 'buddha', name: 'Buddha Point', cost: 0, duration: 0.5 },
+                    { id: 'takin', name: 'Takin Preserve', cost: 10, duration: 0.5 },
+                    { id: 'paper', name: 'Paper Factory', cost: 5, duration: 0.5 }
+                ],
+                'punakha': [
+                    { id: 'rafting', name: 'River Rafting', cost: 150, duration: 0.5 },
+                    { id: 'dzong', name: 'Punakha Dzong', cost: 0, duration: 0.5 }
+                ],
+                'bumthang': [
+                    { id: 'swiss', name: 'Swiss Cheese Factory', cost: 10, duration: 0.5 },
+                    { id: 'temple', name: 'Jambay Lhakhang', cost: 0, duration: 0.5 }
+                ]
+            }
+        };
+
+        // --- GLOBAL VARIABLES & FUNCTIONS ---
+        // Attached to window to be accessible from HTML onclick handlers
+        
+        window.isAdminLoggedIn = false;
+        let activeAdminChatId = null;
+        let guestId = localStorage.getItem('chat_guest_id');
+        if (!guestId) {
+            guestId = 'guest_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('chat_guest_id', guestId);
+        }
+
+        // --- NAVIGATION ---
+        window.navigateTo = function(pageId, updateHistory = true) {
+            if (pageId === 'admin-login' && window.isAdminLoggedIn) {
+                pageId = 'admin-panel';
+            }
+
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                setTimeout(() => { if(!section.classList.contains('active')) section.style.display = 'none'; }, 400); 
+                section.style.display = 'none';
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active-link'));
+            const activeNav = document.getElementById(`nav-${pageId}`);
+            if (activeNav) activeNav.classList.add('active-link');
+
+            const target = document.getElementById(pageId);
+            if (target) {
+                target.style.display = 'block';
+                setTimeout(() => target.classList.add('active'), 10);
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
+
+            const chatWidget = document.getElementById('chat-widget');
+            if (pageId === 'admin-panel' || pageId === 'admin-login') {
+                chatWidget.style.display = 'none';
+            } else {
+                chatWidget.style.display = 'flex';
+            }
+
+            if (updateHistory) {
+                try { history.pushState({ page: pageId }, null, `#${pageId}`); } catch(e) {}
+            }
+        }
+
+        // --- INIT ---
+        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            let hash = '';
+            try { hash = window.location.hash.substring(1); } catch(e) {}
+            if (hash) window.navigateTo(hash, false);
+            else window.navigateTo('home', false);
+
+            initBuilder();
+            initGuestChat();
+            
+            // Check auth state
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    window.isAdminLoggedIn = true;
+                    // If on login page, redirect
+                    if (document.getElementById('admin-login').classList.contains('active')) {
+                         window.navigateTo('admin-panel');
+                         initAdminChatList();
+                    } else if (document.getElementById('admin-panel').classList.contains('active')) {
+                         initAdminChatList();
+                    }
+                } else {
+                    window.isAdminLoggedIn = false;
+                    if (document.getElementById('admin-panel').classList.contains('active')) {
+                        window.navigateTo('admin-login');
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('popstate', (event) => {
+            const pageId = event.state ? event.state.page : 'home';
+            window.navigateTo(pageId, false);
+        });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        }
+
+        // --- TOUR DETAILS & BOOKING ---
+        window.openTourDetails = function(tourId) {
+            const tour = TOUR_DATA[tourId];
+            if (!tour) return;
+            const container = document.getElementById('tour-details-content');
+            let reviewsHtml = tour.reviews.length > 0 
+                ? tour.reviews.map(r => `
+                    <div class="border-b border-gray-100 pb-4 mb-4">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold text-gray-800">${r.user}</span>
+                            <div class="flex text-yellow-400 text-xs">${'★'.repeat(r.rating)}</div>
+                        </div>
+                        <p class="text-gray-600 text-sm">"${r.text}"</p>
+                    </div>`).join('') 
+                : '<p class="text-gray-400 italic">No reviews yet. Be the first!</p>';
+
+            container.innerHTML = `
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="rounded-2xl overflow-hidden shadow-lg h-80">
+                        <img src="${tour.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">${tour.title}</h1>
+                        <div class="flex items-center gap-4 text-sm text-gray-500 mb-6">
+                            <span><i data-lucide="clock" class="inline w-4 h-4 mr-1"></i> ${tour.duration} Days</span>
+                            <span><i data-lucide="map-pin" class="inline w-4 h-4 mr-1"></i> ${tour.location}</span>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed mb-6">${tour.desc}</p>
+                        <h3 class="text-2xl font-bold mb-4">Itinerary</h3>
+                        <ul class="space-y-3 mb-8">
+                            ${tour.itinerary.map((day, i) => `<li class="flex gap-4"><span class="font-bold text-brand-600 w-16 flex-shrink-0">Day ${i+1}</span><span class="text-gray-700">${day}</span></li>`).join('')}
+                        </ul>
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                            <h3 class="text-xl font-bold mb-4">Customer Reviews</h3>
+                            <div id="review-list-${tourId}" class="mb-6">${reviewsHtml}</div>
+                            <form onsubmit="submitReview(event, ${tourId})" class="border-t border-gray-200 pt-4">
+                                <h4 class="font-bold text-sm mb-2">Leave a Review</h4>
+                                <div class="grid grid-cols-2 gap-4 mb-3">
+                                    <input type="text" name="user" placeholder="Your Name" required class="border rounded px-3 py-2 text-sm w-full">
+                                    <select name="rating" class="border rounded px-3 py-2 text-sm w-full">
+                                        <option value="5">★★★★★ Excellent</option>
+                                        <option value="4">★★★★☆ Good</option>
+                                        <option value="3">★★★☆☆ Average</option>
+                                    </select>
+                                </div>
+                                <textarea name="text" placeholder="Share your experience..." required class="border rounded px-3 py-2 text-sm w-full mb-3"></textarea>
+                                <button type="submit" class="bg-stone-800 text-white px-4 py-2 rounded text-sm hover:bg-black transition">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-1">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 sticky top-24">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-gray-500">Starting from</span>
+                            <span class="text-3xl font-bold text-brand-600">$${tour.price}</span>
+                        </div>
+                        <form onsubmit="handleBooking(event)">
+                            <div class="space-y-4 mb-6">
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Travel Date</label><input type="date" required class="w-full border rounded-lg px-3 py-2 focus:ring-brand-500"></div>
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Travelers</label><select class="w-full border rounded-lg px-3 py-2 bg-white"><option>1 Adult</option><option selected>2 Adults</option><option>3 Adults</option><option>4+ Group</option></select></div>
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Full Name</label><input type="text" required placeholder="John Doe" class="w-full border rounded-lg px-3 py-2"></div>
+                                <div class="p-3 bg-gray-50 border rounded text-xs text-gray-500 flex gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-green-500"></i> Secure Payment (Simulated)</div>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-600 text-white font-bold py-3 rounded-lg hover:bg-brand-700 transition shadow-md">Book Now</button>
+                        </form>
+                    </div>
+                </div>`;
+            lucide.createIcons();
+            window.navigateTo('tour-details');
+        }
+
+        window.submitReview = function(e, tourId) {
+            e.preventDefault();
+            const form = e.target;
+            const user = form.user.value;
+            const rating = parseInt(form.rating.value);
+            const text = form.text.value;
+            TOUR_DATA[tourId].reviews.push({ user, rating, text });
+            const reviewList = document.getElementById(`review-list-${tourId}`);
+            const newReview = document.createElement('div');
+            newReview.className = "border-b border-gray-100 pb-4 mb-4 animate-fade-in-up";
+            newReview.innerHTML = `<div class="flex items-center gap-2 mb-1"><span class="font-bold text-gray-800">${user}</span><div class="flex text-yellow-400 text-xs">${'★'.repeat(rating)}</div></div><p class="text-gray-600 text-sm">"${text}"</p>`;
+            reviewList.appendChild(newReview);
+            form.reset();
+            alert("Review submitted! Thank you for your feedback.");
+        }
+
+        window.handleBooking = function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Processing Payment...";
+            btn.disabled = true;
+            btn.classList.add('opacity-75');
+            setTimeout(() => {
+                btn.innerText = "Booking Confirmed! ✓";
+                btn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                setTimeout(() => {
+                    alert("Your booking has been confirmed! A receipt has been sent to your email.");
+                    window.navigateTo('home');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'bg-green-600');
+                    btn.classList.add('bg-brand-600');
+                    btn.innerText = originalText;
+                }, 1000);
+            }, 2000);
+        }
+
+        // --- ITINERARY BUILDER LOGIC ---
+        function initBuilder() {
+            const destContainer = document.getElementById('builder-destinations');
+            destContainer.innerHTML = BUILDER_DATA.destinations.map(d => `
+                <label class="relative group cursor-pointer overflow-hidden rounded-lg h-32 border-2 border-transparent has-[:checked]:border-brand-500 transition-all">
+                    <input type="checkbox" value="${d.id}" class="peer hidden" onchange="updateBuilder()">
+                    <img src="${d.img}" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition"></div>
+                    <span class="absolute bottom-2 left-2 text-white font-bold drop-shadow-md">${d.name}</span>
+                    <div class="absolute top-2 right-2 bg-brand-500 text-white rounded-full p-1 opacity-0 peer-checked:opacity-100 transition transform scale-0 peer-checked:scale-100"><i data-lucide="check" class="w-3 h-3"></i></div>
+                </label>`).join('');
+            lucide.createIcons();
+        }
+
+        window.updateBuilder = function() {
+            const checkedDestinations = Array.from(document.querySelectorAll('#builder-destinations input:checked')).map(cb => cb.value);
+            const actContainer = document.getElementById('builder-activities');
+            const currentCheckedActs = Array.from(document.querySelectorAll('#builder-activities input:checked')).map(cb => cb.value);
+            
+            if (checkedDestinations.length === 0) {
+                actContainer.innerHTML = '<p class="text-gray-400 text-sm italic">Select destinations first to see available activities.</p>';
+            } else {
+                let html = '';
+                checkedDestinations.forEach(destId => {
+                    const destName = BUILDER_DATA.destinations.find(d => d.id === destId).name;
+                    const acts = BUILDER_DATA.activities[destId];
+                    html += `<div class="mb-3"><h5 class="font-bold text-sm text-brand-800 uppercase mb-2">${destName} Experiences</h5><div class="space-y-2">
+                                ${acts.map(a => `<label class="flex items-center space-x-2 text-sm text-gray-700 cursor-pointer"><input type="checkbox" value="${a.id}" data-dest="${destId}" data-cost="${a.cost}" data-duration="${a.duration}" data-name="${a.name}" class="rounded text-brand-600 focus:ring-brand-500" onchange="renderItinerarySummary()" ${currentCheckedActs.includes(a.id) ? 'checked' : ''}><span>${a.name} ${a.cost > 0 ? `<span class="text-xs bg-gray-100 px-1 rounded ml-1">+$${a.cost}</span>` : ''}</span></label>`).join('')}
+                            </div></div>`;
+                });
+                actContainer.innerHTML = html;
+            }
+            window.renderItinerarySummary();
+        }
+
+        window.renderItinerarySummary = function() {
+            const destIds = Array.from(document.querySelectorAll('#builder-destinations input:checked')).map(cb => cb.value);
+            const actInputs = Array.from(document.querySelectorAll('#builder-activities input:checked'));
+            const tierInput = document.querySelector('input[name="hotel-tier"]:checked');
+            const tierMultiplier = tierInput ? parseInt(tierInput.value) : 3;
+
+            let totalCost = 0;
+            let totalDays = 0;
+            const sdfPerNight = 100;
+            const guideTransportPerDay = 150;
+            const hotelCosts = { 3: 50, 4: 200, 5: 550 };
+            const nightlyHotel = hotelCosts[tierMultiplier];
+
+            const timeline = document.getElementById('builder-timeline');
+            
+            if (destIds.length === 0) {
+                timeline.innerHTML = '<p class="text-gray-400 text-sm">Your journey is empty.</p>';
+                document.getElementById('builder-duration').innerText = '0 Days';
+                document.getElementById('builder-cost').innerText = '$0';
+                return;
+            }
+
+            let html = '';
+            destIds.forEach(dId => {
+                const dest = BUILDER_DATA.destinations.find(d => d.id === dId);
+                const destActs = actInputs.filter(i => i.dataset.dest === dId);
+                let destDays = 1; 
+                let actsHtml = '';
+                if (destActs.length > 0) {
+                     actsHtml = `<ul class="mt-2 space-y-1 text-xs text-gray-500 list-disc pl-4">${destActs.map(a => { totalCost += parseFloat(a.dataset.cost); return `<li>${a.dataset.name}</li>`; }).join('')}</ul>`;
+                }
+                totalDays += destDays;
+                html += `<div class="relative"><div class="absolute -left-[21px] top-1 bg-brand-500 h-3 w-3 rounded-full border-2 border-white shadow"></div><h4 class="font-bold text-gray-800 text-sm">${dest.name}</h4><p class="text-xs text-gray-500">Explore the valley</p>${actsHtml}</div>`;
+            });
+            const dailyRate = sdfPerNight + guideTransportPerDay + nightlyHotel;
+            totalCost += (totalDays * dailyRate);
+            timeline.innerHTML = html;
+            document.getElementById('builder-duration').innerText = `${totalDays} Days / ${totalDays-1} Nights`;
+            document.getElementById('builder-cost').innerText = `$${totalCost}`;
+        }
+
+        // --- FIREBASE CHAT SYSTEM ---
+        
+        function initGuestChat() {
+            const container = document.getElementById('guest-chat-messages');
+            
+            // Listen for Messages
+            const messagesRef = collection(db, 'chats', guestId, 'messages');
+            const q = query(messagesRef, orderBy('createdAt', 'asc'));
+
+            onSnapshot(q, (snapshot) => {
+                container.innerHTML = '';
+                // Welcome message
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = "flex justify-start";
+                welcomeDiv.innerHTML = `<div class="bg-white border border-gray-200 text-gray-700 rounded-lg rounded-tl-none px-3 py-2 max-w-[85%] shadow-sm">Hello! How can we help you plan your Bhutan trip today?</div>`;
+                container.appendChild(welcomeDiv);
+
+                snapshot.forEach((doc) => {
+                    const msg = doc.data();
+                    addMessageToChat('guest', msg.text, msg.sender);
+                });
+            });
+        }
+
+        window.toggleChat = function() {
+            const win = document.getElementById('chat-window');
+            win.classList.toggle('hidden');
+            if(!win.classList.contains('hidden')) {
+                win.classList.add('chat-open');
+                scrollToBottom('guest-chat-messages');
+            }
+        }
+
+        window.sendGuestMessage = async function(e) {
+            e.preventDefault();
+            const input = document.getElementById('guest-chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            input.value = ''; // clear immediately for UX
+
+            try {
+                // Add message to subcollection
+                await addDoc(collection(db, 'chats', guestId, 'messages'), {
+                    text: text,
+                    sender: 'guest',
+                    createdAt: serverTimestamp()
+                });
+
+                // Update parent chat document for Admin List
+                await setDoc(doc(db, 'chats', guestId), {
+                    lastMessage: text,
+                    updatedAt: serverTimestamp(),
+                    guestName: 'Guest Visitor' 
+                }, { merge: true });
+
+            } catch (error) {
+                console.error("Error sending message: ", error);
+            }
+        }
+
+        function addMessageToChat(view, text, sender) {
+            const containerId = view === 'guest' ? 'guest-chat-messages' : 'admin-chat-messages';
+            const container = document.getElementById(containerId);
+            const isMe = (view === 'guest' && sender === 'guest') || (view === 'admin' && sender === 'admin');
+            
+            const div = document.createElement('div');
+            div.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
+            div.innerHTML = `
+                <div class="${isMe ? 'bg-brand-600 text-white' : 'bg-white border border-gray-200 text-gray-700'} rounded-lg px-3 py-2 max-w-[85%] shadow-sm text-sm ${isMe ? 'rounded-tr-none' : 'rounded-tl-none'}">
+                    ${text}
+                </div>
+            `;
+            container.appendChild(div);
+            scrollToBottom(containerId);
+        }
+
+        function scrollToBottom(id) {
+            const el = document.getElementById(id);
+            el.scrollTop = el.scrollHeight;
+        }
+
+        // --- ADMIN SYSTEM ---
+        window.attemptAdminLogin = async function() {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-password').value;
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                // Listener handles redirect
+            } catch (error) {
+                console.error("Login failed", error);
+                document.getElementById('login-error').innerText = "Invalid credentials: " + error.message;
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        window.adminLogout = async function() {
+            await signOut(auth);
+            window.navigateTo('home');
+        }
+
+        let adminUnsub = null;
+
+        function initAdminChatList() {
+            if (adminUnsub) adminUnsub(); // unsubscribe previous if any
+
+            const chatsRef = collection(db, 'chats');
+            const q = query(chatsRef, orderBy('updatedAt', 'desc'));
+
+            adminUnsub = onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('admin-chat-list');
+                list.innerHTML = '';
+                if (snapshot.empty) {
+                     list.innerHTML = '<p class="text-gray-400 text-sm p-4 text-center">No active chats.</p>';
+                     return;
+                }
+                snapshot.forEach((doc) => {
+                    const chat = doc.data();
+                    const chatId = doc.id;
+                    const isActive = chatId === activeAdminChatId ? 'bg-blue-50' : 'bg-white hover:bg-gray-50';
+                    
+                    const el = document.createElement('div');
+                    el.className = `p-3 cursor-pointer border-b border-gray-100 flex items-center gap-3 ${isActive}`;
+                    el.onclick = () => window.openAdminChat(chatId, chat.guestName);
+                    el.innerHTML = `
+                        <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold">G</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-bold text-sm text-gray-900 truncate">${chat.guestName || 'Guest'}</div>
+                            <div class="text-xs text-gray-500 truncate">${chat.lastMessage || 'No messages'}</div>
+                        </div>
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                    `;
+                    list.appendChild(el);
+                });
+            });
+        }
+
+        let activeChatUnsub = null;
+
+        window.openAdminChat = function(chatId, guestName) {
+            activeAdminChatId = chatId;
+            const container = document.getElementById('admin-chat-messages');
+            container.innerHTML = ''; 
+            document.getElementById('admin-chat-header').querySelector('span').innerText = `Chatting with ${guestName || 'Guest'}`;
+            
+            // Show controls
+            document.getElementById('admin-chat-controls').classList.remove('hidden');
+            document.getElementById('admin-chat-controls').classList.add('flex');
+            
+            // Enable input
+            document.getElementById('admin-chat-input').disabled = false;
+            document.getElementById('admin-send-btn').disabled = false;
+
+            // Listen to messages
+            if (activeChatUnsub) activeChatUnsub();
+            
+            const messagesRef = collection(db, 'chats', chatId, 'messages');
+            const q = query(messagesRef, orderBy('createdAt', 'asc'));
+
+            activeChatUnsub = onSnapshot(q, (snapshot) => {
+                container.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const msg = doc.data();
+                    addMessageToChat('admin', msg.text, msg.sender);
+                });
+            });
+        }
+
+        window.sendAdminMessage = async function(e) {
+            e.preventDefault();
+            if (!activeAdminChatId) return;
+            const input = document.getElementById('admin-chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+
+            try {
+                await addDoc(collection(db, 'chats', activeAdminChatId, 'messages'), {
+                    text: text,
+                    sender: 'admin',
+                    createdAt: serverTimestamp()
+                });
+                
+                await setDoc(doc(db, 'chats', activeAdminChatId), {
+                    lastMessage: "You: " + text,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+
+            } catch (error) {
+                console.error("Error sending admin message:", error);
+            }
+        }
+        
+        async function deleteAllMessages(chatId) {
+             const messagesRef = collection(db, 'chats', chatId, 'messages');
+             while (true) {
+                 const q = query(messagesRef, limit(400)); // batch limit is 500
+                 const snapshot = await getDocs(q);
+                 if (snapshot.size === 0) break;
+                 
+                 const batch = writeBatch(db);
+                 snapshot.docs.forEach(d => batch.delete(d.ref));
+                 await batch.commit();
+             }
+        }
+        
+        window.clearCurrentChat = async function() {
+            if (!activeAdminChatId || !confirm("Are you sure you want to clear all messages in this chat?")) return;
+            
+            try {
+                await deleteAllMessages(activeAdminChatId);
+                
+                // Update parent doc
+                const chatRef = doc(db, 'chats', activeAdminChatId);
+                await updateDoc(chatRef, { lastMessage: 'Chat cleared by admin' });
+
+                alert("Chat cleared.");
+            } catch(e) {
+                console.error("Error clearing chat", e);
+                alert("Error clearing chat: " + e.message);
+            }
+        }
+
+        window.deleteCurrentChat = async function() {
+            if (!activeAdminChatId || !confirm("Are you sure you want to DELETE this chat completely?")) return;
+
+            try {
+                await deleteAllMessages(activeAdminChatId);
+                
+                // Delete parent doc
+                const chatRef = doc(db, 'chats', activeAdminChatId);
+                await deleteDoc(chatRef);
+                
+                // Reset UI
+                activeAdminChatId = null;
+                document.getElementById('admin-chat-messages').innerHTML = '';
+                document.getElementById('admin-chat-header').querySelector('span').innerText = 'Select a chat';
+                document.getElementById('admin-chat-controls').classList.remove('flex');
+                document.getElementById('admin-chat-controls').classList.add('hidden');
+                document.getElementById('admin-chat-input').disabled = true;
+                document.getElementById('admin-send-btn').disabled = true;
+                
+                alert("Chat deleted.");
+            } catch(e) {
+                console.error("Error deleting chat", e);
+                alert("Error deleting chat: " + e.message);
+            }
+        }
+    </script>
+</body>
+</html>
