@@ -743,24 +743,24 @@
                     <!-- Contact Form -->
                     <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
                         <h3 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h3>
-                        <form class="space-y-6">
+                        <form class="space-y-6" onsubmit="submitContactForm(event)">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Dorji">
+                                    <input type="text" name="firstName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Dorji">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Wangchuk">
+                                    <input type="text" name="lastName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Wangchuk">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                <input type="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="you@example.com">
+                                <input type="email" name="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="you@example.com">
                             </div>
                              <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                                <select class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition bg-white">
+                                <select name="subject" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition bg-white">
                                     <option>General Inquiry</option>
                                     <option>Plan a Trip</option>
                                     <option>Custom Itinerary</option>
@@ -769,9 +769,9 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                                <textarea rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Tell us about your dream trip..."></textarea>
+                                <textarea name="message" rows="4" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition" placeholder="Tell us about your dream trip..."></textarea>
                             </div>
-                            <button type="button" class="w-full bg-brand-600 text-white font-bold py-4 rounded-lg hover:bg-brand-700 transition duration-300 shadow-md">Send Message</button>
+                            <button type="submit" class="w-full bg-brand-600 text-white font-bold py-4 rounded-lg hover:bg-brand-700 transition duration-300 shadow-md">Send Message</button>
                         </form>
                     </div>
 
@@ -819,10 +819,10 @@
                                  <i data-lucide="mail-open" class="w-12 h-12 mx-auto mb-4 text-brand-500"></i>
                                  <h3 class="text-2xl font-serif font-bold mb-2">Subscribe to our Newsletter</h3>
                                  <p class="text-gray-400 mb-6 text-sm">Get the latest travel tips, hidden gem alerts, and exclusive offers delivered to your inbox.</p>
-                                 <div class="flex flex-col gap-3">
-                                     <input type="email" placeholder="Your email address" class="w-full px-4 py-3 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-brand-500">
-                                     <button class="w-full bg-brand-500 text-white font-bold py-3 rounded-lg hover:bg-brand-600 transition">Subscribe</button>
-                                 </div>
+                                 <form class="flex flex-col gap-3" onsubmit="subscribeNewsletter(event)">
+                                     <input type="email" name="email" required placeholder="Your email address" class="w-full px-4 py-3 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-brand-500">
+                                     <button type="submit" class="w-full bg-brand-500 text-white font-bold py-3 rounded-lg hover:bg-brand-600 transition">Subscribe</button>
+                                 </form>
                              </div>
                         </div>
                     </div>
@@ -1651,6 +1651,81 @@ Reference ID: ${docRef.id}
                     }
                 }
             });
+        }
+
+        // --- NEW: CONTACT FORM SUBMISSION ---
+        window.submitContactForm = async function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "Sending...";
+            
+            const form = e.target;
+            const data = {
+                firstName: form.firstName.value,
+                lastName: form.lastName.value,
+                email: form.email.value,
+                subject: form.subject.value,
+                message: form.message.value,
+                createdAt: serverTimestamp(),
+                status: 'new'
+            };
+
+            try {
+                await addDoc(collection(db, 'contact_messages'), data);
+                form.reset();
+                window.showModal({ title: 'Message Sent', message: 'Thank you for contacting us. We will get back to you shortly!', type: 'alert' });
+            } catch(error) {
+                console.error("Error sending message:", error);
+                window.showModal({ title: 'Error', message: 'Failed to send message. Please try again later.', type: 'alert' });
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        // --- NEW: NEWSLETTER SUBSCRIPTION (Google Sheets) ---
+        // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/a/macros/academy.bt/s/AKfycbxSh6ILpszi5E_ianxafkKuO60qkMFYmbmxr84w0B_gv7-CUGHKNeeWQS69KwbKCJ-dig/exec';
+
+        window.subscribeNewsletter = async function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            const emailInput = e.target.querySelector('input[name="email"]');
+            const email = emailInput.value;
+
+            if(!GOOGLE_SCRIPT_URL.startsWith('https')) {
+                window.showModal({ title: 'Setup Required', message: 'Please configure the Google Script URL in the code.', type: 'alert' });
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Subscribing...";
+
+            try {
+                // Using no-cors mode to send data to Google Script without preflight issues.
+                // We won't get a readable response, so we assume success if no network error occurs.
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                emailInput.value = '';
+                window.showModal({ title: 'Subscribed!', message: 'You have been added to our newsletter.', type: 'alert' });
+
+            } catch(error) {
+                console.error("Error subscribing:", error);
+                window.showModal({ title: 'Error', message: 'Could not subscribe. Please try again.', type: 'alert' });
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
         }
 
         // --- FIREBASE CHAT SYSTEM ---
