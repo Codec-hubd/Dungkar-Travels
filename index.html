@@ -1020,7 +1020,7 @@
     <script type="module">
         // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, limit, deleteDoc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, where, onSnapshot, serverTimestamp, doc, setDoc, getDocs, limit, deleteDoc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // Firebase Configuration
@@ -1056,10 +1056,7 @@
                     "Drive back to Paro, visit National Museum.",
                     "Hike to Tiger's Nest Monastery."
                 ],
-                reviews: [
-                    { user: "Sarah M.", rating: 5, text: "Absolutely magical! The guide was knowledgeable and the hike to Tiger's Nest is a must." },
-                    { user: "John D.", rating: 4, text: "Great itinerary, but the roads are a bit winding. Hotel in Punakha was superb." }
-                ]
+                reviews: []
             },
             2: {
                 title: "Jomolhari Trek",
@@ -1076,9 +1073,7 @@
                     "Rest day at Base Camp.",
                     "Trek back down via alternative route."
                 ],
-                reviews: [
-                    { user: "Alex P.", rating: 5, text: "Challenging but rewarding. The views of Jomolhari at sunrise are unforgettable." }
-                ]
+                reviews: []
             },
             3: {
                 title: "Festival of Colors",
@@ -1299,21 +1294,13 @@
         }
 
         // --- TOUR DETAILS & BOOKING ---
+        let reviewUnsub = null;
+
         window.openTourDetails = function(tourId) {
             const tour = TOUR_DATA[tourId];
             if (!tour) return;
             const container = document.getElementById('tour-details-content');
-            let reviewsHtml = tour.reviews.length > 0 
-                ? tour.reviews.map(r => `
-                    <div class="border-b border-gray-100 pb-4 mb-4">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="font-bold text-gray-800">${r.user}</span>
-                            <div class="flex text-yellow-400 text-xs">${'★'.repeat(r.rating)}</div>
-                        </div>
-                        <p class="text-gray-600 text-sm">"${r.text}"</p>
-                    </div>`).join('') 
-                : '<p class="text-gray-400 italic">No reviews yet. Be the first!</p>';
-
+            
             container.innerHTML = `
                 <div class="lg:col-span-2 space-y-8">
                     <div class="rounded-2xl overflow-hidden shadow-lg h-80">
@@ -1332,7 +1319,9 @@
                         </ul>
                         <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
                             <h3 class="text-xl font-bold mb-4">Customer Reviews</h3>
-                            <div id="review-list-${tourId}" class="mb-6">${reviewsHtml}</div>
+                            <div id="review-list-${tourId}" class="mb-6">
+                                <p class="text-gray-400 italic">Loading reviews...</p>
+                            </div>
                             <form onsubmit="submitReview(event, ${tourId})" class="border-t border-gray-200 pt-4">
                                 <h4 class="font-bold text-sm mb-2">Leave a Review</h4>
                                 <div class="grid grid-cols-2 gap-4 mb-3">
@@ -1368,22 +1357,71 @@
                 </div>`;
             lucide.createIcons();
             window.navigateTo('tour-details');
+            window.initTourReviews(tourId);
         }
 
-        window.submitReview = function(e, tourId) {
+        window.initTourReviews = function(tourId) {
+            if (reviewUnsub) reviewUnsub();
+
+            // Removed orderBy to avoid requiring a composite index in Firestore
+            const q = query(collection(db, 'reviews'), where('tourId', '==', tourId));
+            
+            reviewUnsub = onSnapshot(q, (snapshot) => {
+                const container = document.getElementById(`review-list-${tourId}`);
+                if (!container) return; // View changed
+
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-400 italic">No reviews yet. Be the first!</p>';
+                    return;
+                }
+
+                let reviews = [];
+                snapshot.forEach(doc => {
+                    reviews.push(doc.data());
+                });
+
+                // Sort client-side
+                reviews.sort((a, b) => {
+                    const timeA = a.createdAt ? a.createdAt.seconds : 0;
+                    const timeB = b.createdAt ? b.createdAt.seconds : 0;
+                    return timeB - timeA;
+                });
+
+                let html = '';
+                reviews.forEach(r => {
+                    html += `<div class="border-b border-gray-100 pb-4 mb-4 animate-fade-in-up">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold text-gray-800">${r.user}</span>
+                            <div class="flex text-yellow-400 text-xs">${'★'.repeat(r.rating)}</div>
+                        </div>
+                        <p class="text-gray-600 text-sm">"${r.text}"</p>
+                    </div>`;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        window.submitReview = async function(e, tourId) {
             e.preventDefault();
             const form = e.target;
             const user = form.user.value;
             const rating = parseInt(form.rating.value);
             const text = form.text.value;
-            TOUR_DATA[tourId].reviews.push({ user, rating, text });
-            const reviewList = document.getElementById(`review-list-${tourId}`);
-            const newReview = document.createElement('div');
-            newReview.className = "border-b border-gray-100 pb-4 mb-4 animate-fade-in-up";
-            newReview.innerHTML = `<div class="flex items-center gap-2 mb-1"><span class="font-bold text-gray-800">${user}</span><div class="flex text-yellow-400 text-xs">${'★'.repeat(rating)}</div></div><p class="text-gray-600 text-sm">"${text}"</p>`;
-            reviewList.appendChild(newReview);
-            form.reset();
-            window.showModal({ title: 'Success', message: 'Review submitted! Thank you for your feedback.', type: 'alert' });
+
+            try {
+                await addDoc(collection(db, 'reviews'), {
+                    tourId: tourId,
+                    user: user,
+                    rating: rating,
+                    text: text,
+                    createdAt: serverTimestamp()
+                });
+                form.reset();
+                window.showModal({ title: 'Success', message: 'Review submitted! Thank you for your feedback.', type: 'alert' });
+            } catch (error) {
+                console.error("Error submitting review:", error);
+                window.showModal({ title: 'Error', message: 'Failed to submit review. Please try again.', type: 'alert' });
+            }
         }
 
         window.handleBooking = function(e) {
