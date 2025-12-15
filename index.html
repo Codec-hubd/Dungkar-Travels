@@ -853,7 +853,14 @@
                     <button onclick="adminLogout()" class="text-red-600 font-semibold text-sm">Logout</button>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-200 mb-8">
+                    <button onclick="switchAdminTab('messages')" id="tab-messages" class="px-6 py-3 font-medium text-brand-600 border-b-2 border-brand-600 transition-colors">Messages</button>
+                    <button onclick="switchAdminTab('quotes')" id="tab-quotes" class="px-6 py-3 font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent transition-colors">Quote Requests</button>
+                </div>
+                
+                <!-- Messages View -->
+                <div id="admin-view-messages" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     <!-- Chat List -->
                     <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden h-[600px] flex flex-col">
                         <div class="p-4 bg-gray-50 border-b border-gray-200 font-bold">Active Chats</div>
@@ -880,6 +887,29 @@
                                 <input type="text" id="admin-chat-input" class="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Reply..." disabled>
                                 <button type="submit" id="admin-send-btn" class="bg-brand-600 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50" disabled>Send</button>
                             </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quotes View -->
+                <div id="admin-view-quotes" class="hidden">
+                    <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold">
+                                        <th class="p-4">Date</th>
+                                        <th class="p-4">Email</th>
+                                        <th class="p-4">Itinerary</th>
+                                        <th class="p-4">Est. Cost</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-quotes-list" class="text-sm">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1462,7 +1492,7 @@
         }
         
         window.requestCustomQuote = function(btn) {
-            const destIds = document.querySelectorAll('#builder-destinations input:checked');
+            const destIds = Array.from(document.querySelectorAll('#builder-destinations input:checked')).map(cb => cb.value);
             
             if (destIds.length === 0) {
                 window.showModal({ title: 'Itinerary Empty', message: 'Please select at least one destination.', type: 'alert' });
@@ -1475,10 +1505,8 @@
                 type: 'input',
                 placeholder: 'you@example.com',
                 confirmText: 'Submit Request',
-                onConfirm: (email) => {
+                onConfirm: async (email) => {
                      if (!email || !email.trim()) {
-                         // Need to reopen modal or show error. For simplicity, just alert via new modal
-                         // Timeout to allow previous modal to close smoothly
                          setTimeout(() => window.showModal({ title: 'Error', message: 'Email is required to send the quote.', type: 'alert' }), 300);
                          return;
                      }
@@ -1487,31 +1515,102 @@
                     btn.innerText = "Submitting Request...";
                     btn.disabled = true;
                     btn.classList.add('opacity-75', 'cursor-not-allowed');
-        
-                    setTimeout(() => {
-                        btn.innerText = "Request Sent! ✓";
-                        btn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
-                        btn.classList.add('bg-green-600', 'hover:bg-green-700');
-                        
+                    
+                    // Collect Data
+                    const destNames = destIds.map(id => BUILDER_DATA.destinations.find(d => d.id === id).name);
+                    const actInputs = Array.from(document.querySelectorAll('#builder-activities input:checked'));
+                    const acts = actInputs.map(i => i.dataset.name);
+                    const tierInput = document.querySelector('input[name="hotel-tier"]:checked');
+                    const tier = tierInput ? tierInput.value : '3';
+                    const cost = document.getElementById('builder-cost').innerText;
+                    const duration = document.getElementById('builder-duration').innerText;
+
+                    try {
+                        // 1. Save to Firestore
+                        const docRef = await addDoc(collection(db, 'quote_requests'), {
+                             email: email,
+                             destinations: destNames,
+                             activities: acts,
+                             hotelTier: tier,
+                             estimatedCost: cost,
+                             estimatedDuration: duration,
+                             createdAt: serverTimestamp(),
+                             status: 'pending'
+                        });
+
+                        // 2. Send Email via Web3Forms
+                        const emailBody = `
+New Custom Trip Quote Request
+
+Client Email: ${email}
+Destinations: ${destNames.join(', ')}
+Duration: ${duration}
+Accommodation: ${tier}-Star
+Estimated Cost: ${cost}
+
+Selected Activities:
+${acts.length > 0 ? acts.join('\n') : 'None selected'}
+
+Reference ID: ${docRef.id}
+                        `;
+
+                        const response = await fetch("https://api.web3forms.com/submit", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Accept: "application/json",
+                            },
+                            body: JSON.stringify({
+                                access_key: "370344ce-4f5d-42a0-8fcb-cef2994fa4bc",
+                                subject: "New Quote Request from " + email,
+                                from_name: "Serene Horizons App",
+                                email: email, // Enables Reply-To and Auto-Response (if configured)
+                                message: emailBody,
+                                // structured data
+                                "Destinations": destNames.join(', '),
+                                "Duration": duration,
+                                "Cost": cost,
+                                "Hotel Tier": tier + "-Star"
+                            }),
+                        });
+
+                        const result = await response.json();
+                        if (!result.success) {
+                            console.warn("Web3Forms error:", result); 
+                            // We don't throw here to ensure the user still gets a success message for the DB save
+                        }
+
                         setTimeout(() => {
-                            window.showModal({ 
-                                title: 'Request Received', 
-                                message: `Thank you! We have received your custom itinerary request. A detailed quote will be sent to ${email} within 24 hours.`,
-                                type: 'alert',
-                                onConfirm: () => {
-                                    window.navigateTo('home');
-                                }
-                            });
+                            btn.innerText = "Request Sent! ✓";
+                            btn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
+                            btn.classList.add('bg-green-600', 'hover:bg-green-700');
                             
-                            // Reset button state
                             setTimeout(() => {
-                                btn.disabled = false;
-                                btn.classList.remove('opacity-75', 'cursor-not-allowed', 'bg-green-600', 'hover:bg-green-700');
-                                btn.classList.add('bg-brand-600', 'hover:bg-brand-700');
-                                btn.innerText = originalText;
-                            }, 500);
-                        }, 1000);
-                    }, 1500);
+                                window.showModal({ 
+                                    title: 'Request Received', 
+                                    message: `Thank you! We have received your custom itinerary request. A detailed quote will be sent to ${email} shortly.`,
+                                    type: 'alert',
+                                    onConfirm: () => {
+                                        window.navigateTo('home');
+                                    }
+                                });
+                                
+                                // Reset button state
+                                setTimeout(() => {
+                                    btn.disabled = false;
+                                    btn.classList.remove('opacity-75', 'cursor-not-allowed', 'bg-green-600', 'hover:bg-green-700');
+                                    btn.classList.add('bg-brand-600', 'hover:bg-brand-700');
+                                    btn.innerText = originalText;
+                                }, 500);
+                            }, 1000);
+                        }, 500);
+                    } catch(e) {
+                        console.error("Error processing request:", e);
+                         setTimeout(() => window.showModal({ title: 'Error', message: 'Failed to submit request. Please try again.', type: 'alert' }), 300);
+                         btn.disabled = false;
+                         btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                         btn.innerText = originalText;
+                    }
                 }
             });
         }
@@ -1778,6 +1877,102 @@
                     } catch(e) {
                         console.error("Error deleting chat", e);
                         window.showModal({ title: 'Error', message: "Error deleting chat: " + e.message, type: 'alert' });
+                    }
+                }
+            });
+        }
+        
+        // --- ADMIN QUOTES SYSTEM ---
+        window.switchAdminTab = function(tab) {
+            // UI toggle
+            document.getElementById('admin-view-messages').classList.toggle('hidden', tab !== 'messages');
+            document.getElementById('admin-view-quotes').classList.toggle('hidden', tab !== 'quotes');
+        
+            // Tab styling
+            const tabs = ['messages', 'quotes'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if(t === tab) {
+                    btn.classList.add('text-brand-600', 'border-brand-600');
+                    btn.classList.remove('text-gray-500', 'border-transparent');
+                } else {
+                     btn.classList.remove('text-brand-600', 'border-brand-600');
+                    btn.classList.add('text-gray-500', 'border-transparent');
+                }
+            });
+        
+            if(tab === 'quotes') {
+                initAdminQuotes();
+            }
+        }
+        
+        let quotesUnsub = null;
+        function initAdminQuotes() {
+            if(quotesUnsub) return; // already listening
+        
+            const q = query(collection(db, 'quote_requests'), orderBy('createdAt', 'desc'));
+            quotesUnsub = onSnapshot(q, (snapshot) => {
+                const tbody = document.getElementById('admin-quotes-list');
+                if(snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-400">No quote requests yet.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                    const row = document.createElement('tr');
+                    row.className = "border-b border-gray-100 hover:bg-gray-50 transition";
+                    
+                    const dests = Array.isArray(data.destinations) ? data.destinations.join(', ') : 'Unknown';
+                    const actCount = Array.isArray(data.activities) ? data.activities.length : 0;
+                    
+                    row.innerHTML = `
+                        <td class="p-4 text-gray-600 whitespace-nowrap">${date}</td>
+                        <td class="p-4 font-medium text-gray-900">${data.email || 'No Email'}</td>
+                        <td class="p-4 text-gray-600">
+                            <div class="font-bold text-xs uppercase mb-1">${dests}</div>
+                            <div class="text-xs text-gray-400">${actCount} Activities • ${data.hotelTier || 3}-Star Hotels</div>
+                        </td>
+                        <td class="p-4 text-brand-600 font-bold">${data.estimatedCost || '$0'}</td>
+                        <td class="p-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${data.status === 'processed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${data.status || 'pending'}</span></td>
+                        <td class="p-4">
+                            <button onclick="toggleQuoteStatus('${doc.id}', '${data.status || 'pending'}')" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded transition">
+                                ${data.status === 'processed' ? 'Mark Pending' : 'Mark Processed'}
+                            </button>
+                             <button onclick="deleteQuoteRequest('${doc.id}')" class="text-xs text-red-600 hover:text-red-800 ml-2">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                lucide.createIcons();
+            });
+        }
+        
+        window.toggleQuoteStatus = async function(id, currentStatus) {
+            const newStatus = currentStatus === 'pending' ? 'processed' : 'pending';
+            try {
+                await updateDoc(doc(db, 'quote_requests', id), { status: newStatus });
+            } catch(e) {
+                console.error("Error updating status:", e);
+                window.showModal({ title: 'Error', message: e.message, type: 'alert' });
+            }
+        }
+        
+        window.deleteQuoteRequest = function(id) {
+             window.showModal({
+                title: 'Delete Request',
+                message: 'Are you sure you want to delete this quote request?',
+                type: 'confirm',
+                confirmText: 'Delete',
+                onConfirm: async () => {
+                    try {
+                        await deleteDoc(doc(db, 'quote_requests', id));
+                    } catch(e) {
+                        console.error("Error deleting request:", e);
+                        window.showModal({ title: 'Error', message: e.message, type: 'alert' });
                     }
                 }
             });
